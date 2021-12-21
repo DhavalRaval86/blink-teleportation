@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Instant and blink teleportation</title>
+
+        <!-- AFrame -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.2.0/aframe.min.js"></script>
+
+        <!-- AFrame Extra -->
+        <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+        <!-- Super hands -->
+        <script src="https://unpkg.com/super-hands@^2.1.0/dist/super-hands.min.js"></script>
+
+        <!-- Look At Component -->
+        <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+
+        <!-- Event Set -->
+        <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+
+        <!-- Animation Component -->
+        <script src="scripts/aframe-animation-component/aframe-animation-component.min.js"></script>
+
+    </head>
+
+    <body>
+        <a-scene background="color: #FFF">
+            <!-- Asset Management System -->
+            <a-assets>
+                <img id="footsteps" src="images/Steps_Gray.png">
+                <img id="black" src="images/">
+            </a-assets>
+
+
+            <!-- Ground -->
+            <a-plane color="#DDD" shader="flat" rotation="-90 0 0" scale="10 40 1"
+                position="0 0 -12"></a-plane>
+
+            
+            <!-- Blue Box -->
+            <a-box color="#00AAFF" position="-3 0.5 -16"></a-box>
+
+            <!-- Green Box -->
+            <a-box color="#00AA00" position="3 0.5 -16"></a-box>
+
+            <!-- Yellow Box -->
+            <a-box color="#FFAA00" position="-3 0.5 -8"></a-box>
+
+            <!-- Red Box -->
+            <!-- Using 3D object as checkponint to move -->
+            <!-- We can give a place where camera will stop (offset)
+                 Here in the following case camera will move to object
+                 but will stop 1m away on the X axis. -->
+            <a-box color="#AA0000" position="3 0.5 -8" checkpoint="offset: -1 0 0"></a-box>
+
+            <!-- Camera will always move to the checkpoint position
+                 at all axis X, Y and Z so if check point is at the 
+                 height, camera will go to that height as well. -->
+            <a-image src="#footsteps" position="-3 3.5 -8" checkpoint look-at="#cam"></a-image>
+
+            <a-image src="#footsteps" position="0 0.001 0" rotation="-90 0 0" checkpoint></a-image>
+            <a-image src="#footsteps" position="0 0.001 -6" rotation="-90 0 0" checkpoint></a-image>
+            <a-image src="#footsteps" position="0 0.001 -12" rotation="-90 0 0" checkpoint></a-image>
+
+            
+            <!-- Camera Rig -->
+            <!-- If we change the mode of checkpoint-controls 
+                 from animation to teleport, then it will move 
+                 instantaniously -->
+
+            <!-- For blink you have to change the mode to animate
+                 and add a property of animateSpeed -->
+            <a-entity movement-controls="controls: checkpoint"
+                checkpoint-controls="mode: animate; 
+                                    animateSpeed: 13.0" 
+                id="cam"
+                event-set__start="_event: navigation-start; 
+                                _target: #blink;
+                                animation.property: opacity;
+                                animation.to: 1;
+                                animation.dur: 250;
+                                animation.easing: easeOutQuad;"
+                event-set__end="_event: navigation-end;
+                                _target: #blink;
+                                animation.to: 0;">
+                 <a-entity progressive-controls>
+                     <a-camera>
+                         <!-- Vignette -->
+                         <a-image id="blink" src="#black" position="0 0 -0.3" opacity="0"></a-image>
+                     </a-camera>
+                 </a-entity>
+                 
+             </a-entity>
+        </a-scene>
+    </body>
+</html>
